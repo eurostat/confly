@@ -860,7 +860,7 @@ as 'geo_m_preds'. The imputation flag is currently called 'spv_cov_imputation_fl
 	*/
 
 	
-	ods pdf file="&path_output./Output_&table._V&version..pdf";
+	ods pdf file="&path_output.Output_&table._V&version..pdf";
 
 
 		data cp_tab2B_check;
