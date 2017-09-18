@@ -9,7 +9,7 @@
  *a: Output file(s): /ec/prod/server/sas/1lfs/listings/bachfab/test1_csv.csv            a*
  *a: -------------------------------------------------------------------- *
  *b:                                                                      *
- *b: created the 09/14/17
+ *b: created the 09/18/17
  *c: ==================================================================== *
  COUNTRIES : DE
                                                                            
@@ -391,7 +391,7 @@ run;
 											
  /* APPLY country order                  */
 COUNTRY_ORDER COUNTRY YEAR QUARTER
-AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR POP FLAG*/
+AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR POP FLAG
 ;
 											
     format COUNTRY_ORDER $20.;
@@ -404,7 +404,7 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR POP FLAG*/
   IF COUNTRY in ('EU-27') then delete;     
   IF COUNTRY in ('EU-28') then delete;     
 ;   rename POP=VALUE;                 
- IF FLAG in ('c','a') then POP = . ;   
+ IF FLAG in ('c','a') then POP = . ;  
   ;run;                                    
 %if %sysfunc(exist(work.RESALL)) %then %do; 
 	%let nobs=0;							
