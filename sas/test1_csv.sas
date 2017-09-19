@@ -361,7 +361,8 @@ quit;
     POPLIM=POP;                    
 if LIMIT_A lt POPLIM le LIMIT_B then FLAG='b';
 else if POPLIM le LIMIT_A then FLAG='a';	   
- if freq le LIMIT_C then CFLAG='c';      
+ if freq le LIMIT_C then CFLAG = FLAG || 'c';      
+ else CFLAG = FLAG;
 run;													
 %end;				 										
 %MEND relbyear;										
@@ -391,7 +392,7 @@ run;
 											
  /* APPLY country order                  */
 COUNTRY_ORDER COUNTRY YEAR QUARTER
-AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG CFLAG
+AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP CFLAG wgt ckey noise freq2 value2
 ;
 											
     format COUNTRY_ORDER $20.;
@@ -404,7 +405,17 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG CFLAG
   IF COUNTRY in ('EU-27') then delete;     
   IF COUNTRY in ('EU-28') then delete;     
 ;   rename POP=VALUE;                 
- IF FLAG in ('a') or CFLAG in ('c') then POP = . ;  
+ wgt = pop / freq;
+ IF CFLAG in ('a','c','ac') then POP = . ;  
+ %if freq gt 0 %then %do;
+	ckey = ranuni(-1);
+	noise = 0;
+	if ckey lt 0.25 then noise = -1;
+	else if ckey gt 0.75 then noise = 1;
+	freq2 = freq + noise;
+	value2 = freq2 * wgt;
+ %end;
+
   ;run;                                    
 %if %sysfunc(exist(work.RESALL)) %then %do; 
 	%let nobs=0;							
