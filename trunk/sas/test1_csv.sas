@@ -361,8 +361,8 @@ quit;
     POPLIM=POP;                    
 if LIMIT_A lt POPLIM le LIMIT_B then FLAG='b';
 else if POPLIM le LIMIT_A then FLAG='a';	   
- if freq le LIMIT_C then CFLAG = FLAG || 'c';      
- else CFLAG = FLAG;
+ if freq le LIMIT_C then FLAG2 = FLAG || 'c';      
+ else FLAG2 = FLAG;
 run;													
 %end;				 										
 %MEND relbyear;										
@@ -392,7 +392,7 @@ run;
 											
  /* APPLY country order                  */
 COUNTRY_ORDER COUNTRY YEAR QUARTER
-AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP CFLAG wgt ckey noise freq2 value2
+AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG2 wgt ckey noise freq2 value2 AD1 RAD1 DR1 AD2 RAD2 DR2
 ;
 											
     format COUNTRY_ORDER $20.;
@@ -405,8 +405,13 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP CFLAG wgt ckey noise f
   IF COUNTRY in ('EU-27') then delete;     
   IF COUNTRY in ('EU-28') then delete;     
 ;   rename POP=VALUE;                 
- wgt = pop / freq;
- IF CFLAG in ('a','c','ac') then POP = . ;  
+ wgt = POP / freq;
+ IF FLAG2 in ('a','c','ac') then do;
+	POP = . ;  
+	AD1 = freq;
+	RAD1 = 1;
+	DR1 = sqrt(freq);
+ end;
  %if freq gt 0 %then %do;
 	ckey = ranuni(-1);
 	noise = 0;
@@ -414,6 +419,9 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP CFLAG wgt ckey noise f
 	else if ckey gt 0.75 then noise = 1;
 	freq2 = freq + noise;
 	value2 = freq2 * wgt;
+	AD2 = abs(freq2-freq);
+	RAD2 = abs(freq2/freq-1);
+	DR2 = abs(sqrt(freq2)-sqrt(freq));
  %end;
 
   ;run;                                    
@@ -542,4 +550,3 @@ run;
  tables flag /missing; 
  title 'Data without Subtotals'; 
  run ; 
-      
