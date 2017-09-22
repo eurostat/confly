@@ -380,6 +380,46 @@ run;
 %MEND confyear;	
 					
                                                         
+/* load ptable from csv file: taken from ckm_macros.sas in census package */
+%Macro read_in_data;
+
+	/*Imports ptable from csv file */
+	data work.&ptable_ds;
+	     %let _EFIERR_ = 0; 
+	    infile "&path_ptable.&ptable_ds..csv" delimiter = ';' MISSOVER Termstr=crlf lrecl=32767 firstobs=2 ;
+	        informat pcv 8. ;
+	        informat ckey 8. ;
+	        informat pvalue 8. ;
+	        format pcv 8. ;
+	        format ckey 8. ;
+	        format pvalue 8. ;
+	     input
+	                 pcv
+	                 ckey
+	                 pvalue
+	     ;
+	     if _ERROR_ then call symputx('_EFIERR_',1);  
+	run;
+	
+	/*get number of rows (prows) and columns (m) in ptable*/
+	proc sql noprint;
+		select max(pcv), max(ckey) into :prows, :pcols
+		from &ptable_ds;
+	quit;
+	
+	%global m pmod;
+	
+	%let m = %left(&pcols); /*m will now be used for the number of ckeys - M was used in early methodology papers*/
+	%put m = &m.;
+	/*(This code is present in both %cpmacro and %read_in_data, since it is*/ 
+	/*necessary for either, and they may be run in isolation from each other*/
+	
+	%let pmod = %eval(&prows);
+	%put pmod = &pmod.;
+
+	run;
+
+%Mend read_in_data;
                                                         
 %MACRO final;                                           
  %let fname=/ec/prod/server/sas/1lfs/listings/bachfab/test1_csv.csv           ;           				
@@ -392,7 +432,7 @@ run;
 											
  /* APPLY country order                  */
 COUNTRY_ORDER COUNTRY YEAR QUARTER
-AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG2 wgt ckey noise freq2 value2 AD1 RAD1 DR1 AD2 RAD2 DR2
+AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG FLAG2 wgt ckey noise freq2 value2 AD1 RAD1 DR1 AD2 RAD2 DR2 ckey2 pcv
 ;
 											
     format COUNTRY_ORDER $20.;
@@ -406,14 +446,15 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG2 wgt ckey noise f
   IF COUNTRY in ('EU-28') then delete;     
 ;   rename POP=VALUE;                 
  wgt = POP / freq;
- IF FLAG2 in ('a','c','ac') then do;
+ /*IF FLAG2 in ('a','c','ac') then do;*/
+ IF FLAG2 in ('c','ac') then do;
 	POP = . ;  
 	AD1 = freq;
 	RAD1 = 1;
 	DR1 = sqrt(freq);
  end;
  %if freq gt 0 %then %do;
-	ckey = ranuni(-1);
+	ckey = ranuni(&mseed);
 	noise = 0;
 	if ckey lt 0.25 then noise = -1;
 	else if ckey gt 0.75 then noise = 1;
@@ -422,13 +463,41 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG2 wgt ckey noise f
 	AD2 = abs(freq2-freq);
 	RAD2 = abs(freq2/freq-1);
 	DR2 = abs(sqrt(freq2)-sqrt(freq));
+	ckey2 = int(&m*ranuni(&mseed)+1);
+	pcv = min(freq,&pmod);
  %end;
 
   ;run;                                    
-%if %sysfunc(exist(work.RESALL)) %then %do; 
+  
+  /*Merge on ptable by cell-key and freq (ptable merge cell freq) and apply perturbation */
+  /*freq3 is cell freq after perturbation  (freq+pvalue = freq3)*/
+	proc sql;
+		create table work.RESALL2 as
+		select a.*, 
+				b.pvalue,
+			case
+				when a.ckey2=0 then a.freq
+				else a.freq + b.pvalue
+			end as freq3
+
+		from work.RESALL as a left join &ptable_ds as b
+			on a.pcv = b.pcv
+			and a.ckey2 = b.ckey
+		order by COUNTRY, YEAR, QUARTER, AGE, COUNTR1Y, COUNTRYB, REGION, REGIONW, SEX, WSTATOR;
+	quit;
+
+	data work.RESALL2;
+		set work.RESALL2;
+		value3 = freq3 * wgt;
+		AD3 = abs(freq3-freq);
+		RAD3 = abs(freq3/freq-1);
+		DR3 = abs(sqrt(freq3)-sqrt(freq));
+	run;
+
+%if %sysfunc(exist(work.RESALL2)) %then %do; 
 	%let nobs=0;							
 	%let any =0;							
-	%let dsid  = %sysfunc(open(RESALL));	
+	%let dsid  = %sysfunc(open(RESALL2));	
 	%let nobs = %sysfunc(attrn(&dsid,nobs));
 	%let any   = %sysfunc(attrn(&dsid,any));
 	%let rc    = %sysfunc(close(&dsid));	
@@ -437,7 +506,7 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG2 wgt ckey noise f
                                            
    %include "/ec/prod/server/sas/1lfs/0lfs.copy/application/lfsbreaks/check_var_exist.sas"; 
   /* export the data set to a csv file. */
-  proc export data=work.RESALL outfile="&fname "
+  proc export data=work.RESALL2 outfile="&fname "
 				dbms=dlm replace; 			
     delimiter=',';                         
   quit;									
@@ -518,7 +587,13 @@ libname YEAR&year ("/ec/prod/server/sas/1lfs/0lfs.copy/datasets/disa/&year/year"
    %let year=%scan(&listan,&i,%str( ));                 
 %end;                                                   
                                                         
+%let path_ptable = /ec/prod/server/sas/1lfs/listings/bachfab/ ;
+%let ptable_ds = ptable_version_01; /*Perturbation with D=3 and V=1 (RECOMMENDED Version: Zeroes stay zeroes)*/
+
+%let mseed = 678;		/* set the seed for producing the microdata record-keys*/
+														
 %confyear;               
+%read_in_data;
 %final;                                                 
                                                         
 %MEND allfiles;                                         
