@@ -486,7 +486,7 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG FLAG2 wgt ckey no
 		order by COUNTRY, YEAR, QUARTER, AGE, COUNTR1Y, COUNTRYB, REGION, REGIONW, SEX, WSTATOR;
 	quit;
 
-	data work.RESALL2;
+	data work.RESALL;
 		set work.RESALL2;
 		value3 = freq3 * wgt;
 		AD3 = abs(freq3-freq);
@@ -494,10 +494,10 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG FLAG2 wgt ckey no
 		DR3 = abs(sqrt(freq3)-sqrt(freq));
 	run;
 
-%if %sysfunc(exist(work.RESALL2)) %then %do; 
+%if %sysfunc(exist(work.RESALL)) %then %do; 
 	%let nobs=0;							
 	%let any =0;							
-	%let dsid  = %sysfunc(open(RESALL2));	
+	%let dsid  = %sysfunc(open(RESALL));	
 	%let nobs = %sysfunc(attrn(&dsid,nobs));
 	%let any   = %sysfunc(attrn(&dsid,any));
 	%let rc    = %sysfunc(close(&dsid));	
@@ -506,7 +506,7 @@ AGE COUNTR1Y COUNTRYB REGION REGIONW SEX WSTATOR FREQ POP FLAG FLAG2 wgt ckey no
                                            
    %include "/ec/prod/server/sas/1lfs/0lfs.copy/application/lfsbreaks/check_var_exist.sas"; 
   /* export the data set to a csv file. */
-  proc export data=work.RESALL2 outfile="&fname "
+  proc export data=work.RESALL outfile="&fname "
 				dbms=dlm replace; 			
     delimiter=',';                         
   quit;									
