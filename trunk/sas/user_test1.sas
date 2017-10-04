@@ -325,6 +325,7 @@ quit;
     POPLIM=POP;                    
 if LIMIT_A lt POPLIM le LIMIT_B then FLAG='b';
 else if POPLIM le LIMIT_A then FLAG='a';	   
+ FLAGNEW = FLAG;
  if freq le LIMIT_C then FLAG='c';      
 run;													
 %end;				 										
@@ -343,6 +344,48 @@ run;
 %MEND confyear;	
 					
                                                         
+/* load ptable from csv file: taken from ckm_macros.sas in census package */
+%Macro read_in_data;
+
+	/*Imports ptable from csv file */
+	data work.&ptable_ds;
+	     %let _EFIERR_ = 0; 
+	    infile "&path_ptable.&ptable_ds..csv" delimiter = ';' MISSOVER Termstr=crlf lrecl=32767 firstobs=2 ;
+	        informat pcv 8. ;
+	        informat ckey 8. ;
+	        informat pvalue 8. ;
+	        format pcv 8. ;
+	        format ckey 8. ;
+	        format pvalue 8. ;
+	     input
+	                 pcv
+	                 ckey
+	                 pvalue
+	     ;
+	     if _ERROR_ then call symputx('_EFIERR_',1);  
+	run;
+	
+	/*get number of rows (prows) and columns (m) in ptable*/
+	proc sql noprint;
+		select max(pcv), max(ckey) into :prows, :pcols
+		from &ptable_ds;
+	quit;
+	
+	%global m pmod;
+	
+	%let m = %left(&pcols); /*m will now be used for the number of ckeys - M was used in early methodology papers*/
+	%put m = &m.;
+	/*(This code is present in both %cpmacro and %read_in_data, since it is*/ 
+	/*necessary for either, and they may be run in isolation from each other*/
+	
+	%let pmod = %eval(&prows);
+	%put pmod = &pmod.;
+
+	run;
+
+%Mend read_in_data;
+					
+                                                        
                                                         
 %MACRO final;                                           
  %let fname=/ec/prod/server/sas/1lfs/listings/bachfab/user_test1.csv           ;           				
@@ -355,7 +398,7 @@ run;
 											
  /* APPLY country order                  */
 COUNTRY_ORDER COUNTRY YEAR QUARTER
-AGE COUNTRYB ILOSTAT ISCO1D SEX POP FLAG
+AGE COUNTRYB ILOSTAT ISCO1D SEX FLAG FLAGNEW POP VALUENEW1 freq ckey2 pcv wgt
 ;
 											
     format COUNTRY_ORDER $20.;
@@ -368,8 +411,51 @@ AGE COUNTRYB ILOSTAT ISCO1D SEX POP FLAG
   IF COUNTRY in ('EU-27') then delete;     
   IF COUNTRY in ('EU-28') then delete;     
 ;   rename POP=VALUE;                 
- IF FLAG in ('c','a') then POP = . ;  
+ wgt = POP / freq;
+ IF FLAG in ('c') then POP = . ;  
+ %if freq gt 0 %then %do;
+	ckey = ranuni(&mseed);
+	noise = 0;
+	if ckey lt 0.25 then noise = -1;
+	else if ckey gt 0.75 then noise = 1;
+	freq2 = freq + noise;
+	VALUENEW1 = freq2 * wgt;
+	ckey2 = int(&m*ranuni(&mseed)+1);
+	pcv = min(freq,&pmod);
+ %end;
+ 
   ;run;                                    
+
+  /*Merge on ptable by cell-key and freq (ptable merge cell freq) and apply perturbation */
+  /*freq3 is cell freq after perturbation  (freq+pvalue = freq3)*/
+	proc sql;
+		create table work.RESALL2 as
+		select a.*, 
+				b.pvalue,
+			case
+				when a.ckey2=0 then a.freq
+				else a.freq + b.pvalue
+			end as freq3
+
+		from work.RESALL as a left join &ptable_ds as b
+			on a.pcv = b.pcv
+			and a.ckey2 = b.ckey
+		order by COUNTRY, YEAR, QUARTER, AGE, COUNTRYB, ILOSTAT, ISCO1D, SEX;
+	quit;
+
+	data work.RESALL;
+		set work.RESALL2;
+		keep                  
+		/* APPLY country order                  */
+		COUNTRY_ORDER COUNTRY YEAR QUARTER
+		AGE COUNTRYB ILOSTAT ISCO1D SEX FLAG FLAGNEW VALUE VALUENEW1 VALUENEW2
+		;
+		format COUNTRY_ORDER $20.;
+		COUNTRY_ORDER=put(COUNTRY,$CTRORD.);
+		
+		VALUENEW2 = freq3 * wgt;
+	run;
+
 %if %sysfunc(exist(work.RESALL)) %then %do; 
 	%let nobs=0;							
 	%let any =0;							
@@ -462,7 +548,13 @@ libname YEAR&year ("/ec/prod/server/sas/1lfs/0lfs.copy/datasets/disa/&year/year"
    %let year=%scan(&listan,&i,%str( ));                 
 %end;                                                   
                                                         
+%let path_ptable = /ec/prod/server/sas/1lfs/listings/bachfab/ ;
+%let ptable_ds = ptable_version_01; /*Perturbation with D=3 and V=1 (RECOMMENDED Version: Zeroes stay zeroes)*/
+
+%let mseed = 678;		/* set the seed for producing the microdata record-keys*/
+														
 %confyear;               
+%read_in_data;
 %final;                                                 
                                                         
 %MEND allfiles;                                         
