@@ -13,7 +13,6 @@ and the survey on
 [EU Statistics on Income and Living Conditions](http://ec.europa.eu/eurostat/web/microdata/european-union-statistics-on-income-and-living-conditions) (EU-SILC).
 
 <table align="center">
-    <tr> <td align="left"><i>documentation</i></td> <td align="left"><strike>available at: https://eurostat.github.io/place2nuts/</strike></td> </tr> 
     <tr> <td align="left"><i>status</i></td> <td align="left">since 2018</b></td></tr> 
     <tr> <td align="left"><i>contributors</i></td> 
     <td align="left" valign="middle">
