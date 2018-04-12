@@ -30,11 +30,6 @@ and the survey on
 ad-hoc LFS queries is performed.
 * [silc](silc): the standard cell key method is adapted to the structure of the EU-SILC data.
 
-**Algorithms**
-
-* Illustration of the cell key method: example based on unweighted frequencies (person counts) 
-as appearing _e.g._ in census data
-
 **Note**
 
 The following `SAS` code can be used for the conversion of unique record identifiers into pseudo-random record keys:
@@ -62,7 +57,7 @@ and test ptables for protection of Census data in the ESS for the Census 2021 ro
 * F. Bach and A. Bujnowska (2018): [**Access to European microdata for scientific purposes**](https://ec.europa.eu/eurostat/cros/system/files/item_13_access_to_microdata-fb-final.pptx), _Pres._ DIME/ITDG.
 * F. Bach (2017): [**Short illustration of the cell key algorithm**](https://ec.europa.eu/eurostat/cros/system/files/cell_key_algorithm.pptx).
 * S. Giessing (2016): **Computational issues in the design of transition probabilities and disclosure risk Estimation for additive noise**, _Proc._ 
-International Conference on Privacy in Statistical Databases, LCNS 9867, doi: [10.1007/978-3-319-45381-1_18](https://doi.org/10.1007/978-3-319-45381-1_18)
+International Conference on Privacy in Statistical Databases, LCNS 9867, doi: [10.1007/978-3-319-45381-1_18](https://doi.org/10.1007/978-3-319-45381-1_18).
 * J. Chipperfield, D. Gow, and B. Loong (2016):
 [**The Australian Bureau of Statistics and releasing frequency tables via a remote server**](https://content.iospress.com/download/statistical-journal-of-the-iaos/sji969?id=statistical-journal-of-the-iaos%2Fsji969),
 _Statistical Journal of the IAOS_, 32(1):53–64, doi: [10.3233/SJI-160969](https://doi.org/10.3233/SJI-160969).
