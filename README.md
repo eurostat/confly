@@ -1,7 +1,7 @@
 confly
 ======
 
-Implementation (`SAS`) of disclosure control methods for microdata confidentiality on the fly.
+Implementation of disclosure control methods for microdata confidentiality on the fly.
 ---
 
 **About**
