@@ -28,14 +28,12 @@ and the survey on
   * information loss, efficiency and processing time are evaluated;
   * an overall fit-for-purpose analysis of the cell-key method in the context of 
 ad-hoc LFS queries is performed.
-* [silc][silc]: the standard cell key method is adapted to the structure of the EU-SILC data.
+* [silc](silc): the standard cell key method is adapted to the structure of the EU-SILC data.
 
 **Algorithms**
 
 * Illustration of the cell key method: example based on unweighted frequencies (person counts) 
 as appearing _e.g._ in census data
-
-...
 
 **Note**
 
