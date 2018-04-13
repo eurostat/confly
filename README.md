@@ -8,6 +8,7 @@ Implementation of disclosure control methods for microdata confidentiality on th
 
 This project supports the implementation and testing of the cell key method for the anonymisation of 
 _Eurostat_ survey data, _e.g._ 
+[census hub](http://ec.europa.eu/eurostat/web/population-and-housing-census/overview)
 [Labour Force Survey](http://ec.europa.eu/eurostat/web/microdata/european-union-labour-force-survey) (LFS)
 and the survey on
 [EU Statistics on Income and Living Conditions](http://ec.europa.eu/eurostat/web/microdata/european-union-statistics-on-income-and-living-conditions) (EU-SILC).
@@ -23,11 +24,11 @@ and the survey on
 
 **Description**
 
+* [census](census): the cell key method was implemented to the census data; see original source code [here](https://ec.europa.eu/eurostat/cros/content/3-random-noise-cell-key-method_en);
 * [lfs](lfs): the standard cell key method is adapted to the structure of the LFS data:
   * various data analyses are  run, and output results are compared; 
   * information loss, efficiency and processing time are evaluated;
-  * an overall fit-for-purpose analysis of the cell-key method in the context of 
-ad-hoc LFS queries is performed.
+  * an overall fit-for-purpose analysis of the cell-key method in the context of ad-hoc LFS queries is performed.
 * [silc](silc): the standard cell key method is adapted to the structure of the EU-SILC data.
 
 **Note**
@@ -45,9 +46,8 @@ call ranuni(hash_int, rkey); /* cell key: then compute actual rkey in [0, 1] */
 
 * Statistical disclosure tools [sdcTools](https://github.com/sdcTools), in particular [sdcTable](https://github.com/sdcTools/sdcTable) 
 and [tauargus](https://github.com/sdcTools/tauargus).
-* [Codes, instructions](https://ec.europa.eu/eurostat/cros/content/testing-recommendations-codes-and-instructions_en) 
-and test ptables for protection of Census data in the ESS for the Census 2021 round: 
-[cell key method](https://ec.europa.eu/eurostat/cros/content/3-random-noise-cell-key-method_en).
+* [Codes and instructions](https://ec.europa.eu/eurostat/cros/content/testing-recommendations-codes-and-instructions_en) 
+for protection of Census data in the ESS for the Census 2021 round; test ptables are also provided.
 * [Table builder](http://www.abs.gov.au/websitedbs/censushome.nsf/home/tablebuilder) of the Australian Bureau of Statistics. 
 
 **<a name="References"></a>References**
