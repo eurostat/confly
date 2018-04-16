@@ -8,13 +8,13 @@ Implementation of disclosure control methods for microdata confidentiality on th
 
 This project supports the implementation and testing of the cell key method for the anonymisation of 
 _Eurostat_ survey data, _e.g._ 
-[census hub](http://ec.europa.eu/eurostat/web/population-and-housing-census/overview)
+the [census hub](http://ec.europa.eu/eurostat/web/population-and-housing-census/overview), the
 [Labour Force Survey](http://ec.europa.eu/eurostat/web/microdata/european-union-labour-force-survey) (LFS)
 and the survey on
 [EU Statistics on Income and Living Conditions](http://ec.europa.eu/eurostat/web/microdata/european-union-statistics-on-income-and-living-conditions) (EU-SILC).
 
 <table align="center">
-    <tr> <td align="left"><i>status</i></td> <td align="left">since 2018</b></td></tr> 
+    <tr> <td align="left"><i>status</i></td> <td align="left">since 2017</b></td></tr> 
     <tr> <td align="left"><i>contributors</i></td> 
     <td align="left" valign="middle">
 <a href="https://github.com/bachfab"><img src="https://github.com/bachfab.png" width="40"></a>
