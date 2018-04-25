@@ -24,12 +24,12 @@ and the survey on
 
 **Description**
 
-* [census](census): the cell key method was implemented to the census data; see original source code [here](https://ec.europa.eu/eurostat/cros/content/3-random-noise-cell-key-method_en);
+* census: the cell key method was implemented to the census data; see original source code [here](https://ec.europa.eu/eurostat/cros/content/3-random-noise-cell-key-method_en);
 * [lfs](lfs): the standard cell key method is adapted to the structure of the LFS data:
   * various data analyses are  run, and output results are compared; 
   * information loss, efficiency and processing time are evaluated;
   * an overall fit-for-purpose analysis of the cell-key method in the context of ad-hoc LFS queries is performed.
-* [silc](silc): the standard cell key method is adapted to the structure of the EU-SILC data.
+* silc: the standard cell key method is adapted to the structure of the EU-SILC data.
 
 **Note**
 
