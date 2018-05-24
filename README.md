@@ -6,12 +6,8 @@ Implementation of disclosure control methods for microdata confidentiality on th
 
 **About**
 
-This project supports the implementation and testing of the cell key method for the anonymisation of 
-_Eurostat_ survey data, _e.g._ 
-the [census hub](http://ec.europa.eu/eurostat/web/population-and-housing-census/overview), the
-[Labour Force Survey](http://ec.europa.eu/eurostat/web/microdata/european-union-labour-force-survey) (LFS)
-and the survey on
-[EU Statistics on Income and Living Conditions](http://ec.europa.eu/eurostat/web/microdata/european-union-statistics-on-income-and-living-conditions) (EU-SILC).
+This project supports the implementation and testing of the cell key method for the anonymisation of _Eurostat_ survey data, _e.g._ the [census hub](http://ec.europa.eu/eurostat/web/population-and-housing-census/overview) and 
+[Labour Force Survey](http://ec.europa.eu/eurostat/web/microdata/european-union-labour-force-survey) (LFS). 
 
 <table align="center">
     <tr> <td align="left"><i>status</i></td> <td align="left">since 2017</b></td></tr> 
@@ -24,12 +20,11 @@ and the survey on
 
 **Description**
 
-* census: the cell key method was implemented to the census data; see original source code [here](https://ec.europa.eu/eurostat/cros/content/3-random-noise-cell-key-method_en);
+* census (not provided here): the cell key method has been implemented to the census data; see original source code [here](https://ec.europa.eu/eurostat/cros/content/3-random-noise-cell-key-method_en);
 * [lfs](lfs): the standard cell key method is adapted to the structure of the LFS data:
   * various data analyses are  run, and output results are compared; 
   * information loss, efficiency and processing time are evaluated;
   * an overall fit-for-purpose analysis of the cell-key method in the context of ad-hoc LFS queries is performed.
-* silc: the standard cell key method is adapted to the structure of the EU-SILC data.
 
 **Note**
 
@@ -41,6 +36,9 @@ hash_hex = put(md5(COUNTRY||YEAR||QUARTER||HHNUM||HHSEQNUM), hex32.); /* cell ke
 hash_int = input(hash_hex, IB4.); /*  cell key: convert to int (IB8. not accepted by RANUNI) */
 call ranuni(hash_int, rkey); /* cell key: then compute actual rkey in [0, 1] */
 ```
+
+It is foreseen that a similar approach will also be adopted for the anonymisation of 
+[EU Statistics on Income and Living Conditions](http://ec.europa.eu/eurostat/web/microdata/european-union-statistics-on-income-and-living-conditions) (EU-SILC) data.
 
 **<a name="resources"></a>Other resources**
 
