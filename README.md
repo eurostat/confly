@@ -4,19 +4,9 @@ confly
 Implementation of disclosure control methods for microdata confidentiality on the fly.
 ---
 
-**About**
 
 This project supports the implementation and testing of the cell key method for the anonymisation of _Eurostat_ survey data, _e.g._ the [census hub](http://ec.europa.eu/eurostat/web/population-and-housing-census/overview) and 
 [Labour Force Survey](http://ec.europa.eu/eurostat/web/microdata/european-union-labour-force-survey) (LFS). 
-
-<table align="center">
-    <tr> <td align="left"><i>status</i></td> <td align="left">since 2017</b></td></tr> 
-    <tr> <td align="left"><i>contributors</i></td> 
-    <td align="left" valign="middle">
-<a href="https://github.com/bachfab"><img src="https://github.com/bachfab.png" width="40"></a>
-</td> </tr> 
-    <tr> <td align="left"><i>license</i></td> <td align="left"><a href="https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdfEUPL">EUPL</a> </td> </tr> 
-</table>
 
 **Description**
 
@@ -39,6 +29,17 @@ call ranuni(hash_int, rkey); /* cell key: then compute actual rkey in [0, 1] */
 
 It is foreseen that a similar approach will also be adopted for the anonymisation of 
 [EU Statistics on Income and Living Conditions](http://ec.europa.eu/eurostat/web/microdata/european-union-statistics-on-income-and-living-conditions) (EU-SILC) data.
+
+**About**
+
+<table align="center">
+    <tr> <td align="left"><i>status</i></td> <td align="left">since 2017</b></td></tr> 
+    <tr> <td align="left"><i>contributors</i></td> 
+    <td align="left" valign="middle">
+<a href="https://github.com/bachfab"><img src="https://github.com/bachfab.png" width="40"></a>
+</td> </tr> 
+    <tr> <td align="left"><i>license</i></td> <td align="left"><a href="https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdfEUPL">EUPL</a> </td> </tr> 
+</table>
 
 **<a name="resources"></a>Other resources**
 
